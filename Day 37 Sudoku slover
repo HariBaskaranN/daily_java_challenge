@@ -1,0 +1,57 @@
+class Solution {
+    List<int[]> rows = new ArrayList<>();
+    List<int[]> cols = new ArrayList<>();
+    List<int[]> diags = new ArrayList<>();
+    public void solveSudoku(char[][] board) {
+        for(int i = 0; i < 9; i++) {
+            rows.add(new int[9]);
+            cols.add(new int[9]);
+            diags.add(new int[9]);
+        }
+        for(int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                char ch = board[row][col];
+                if (ch == '.') continue;
+                int num = ch - '0';
+                rows.get(row)[num - 1] = 1;
+                cols.get(col)[num - 1] = 1;
+                diags.get(row/3*3 + col/3)[num - 1] = 1;
+            }
+        }
+        fill(board, 0, 0);
+    }
+    boolean fill(char[][] board, int row, int col) {
+        if (row == 9 && col == 0) {
+            return true;
+        }
+        int newCol = col + 1;
+        int newRow = row;
+        if (newCol >= 9) {
+            newRow = row + 1;
+            newCol = 0;
+        }
+        if (board[row][col] != '.') {
+            return fill(board, newRow, newCol);
+        }
+
+        for (int i = 0; i < 9; i++) {
+            if (rows.get(row)[i] == 0 
+                && cols.get(col)[i] == 0 
+                && diags.get(row/3*3 + col/3)[i] == 0) {
+
+                board[row][col] = (char)('0' + i + 1);
+                rows.get(row)[i]++;
+                cols.get(col)[i]++;
+                diags.get(row/3*3 + col/3)[i]++;
+                if(fill(board, newRow, newCol)) {
+                    return true;
+                }
+                board[row][col] = '.';
+                rows.get(row)[i]--;
+                cols.get(col)[i]--;
+                diags.get(row/3*3 + col/3)[i]--;
+            }
+        }
+        return false;
+    }
+}
